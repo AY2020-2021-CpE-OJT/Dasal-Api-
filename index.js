@@ -53,13 +53,12 @@ app.post('/posts', async (req, res)=>{
   }
 });
 
-app.post('/user/create', async (req, res)=>{
-    const user = new User({
-        userName: req.body.userName,
-        password: req.body.password
-    });
+//create user
+app.post('/createuser', async (req, res)=>{
   try{
-      const saveUser = await user.save();
+   const hashedPassword = await bcrypt.hash(req.body.password, 10)
+   const user = new User({ userName: req.body.userName, password: hashedPassword });
+    const saveUser = await user.save();
       res.json(saveUser);
   }
   catch (err){
@@ -109,7 +108,6 @@ app.patch('/update/:id', function (req, res) {
 /*app.get('/users', (req, res) => {
     res.json(users)
 })
-
 app.post('/users', async (req, res) => {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10)
@@ -136,7 +134,6 @@ app.post('/users/login', async (req, res) => {
       res.status(500).send()
     }
 })
-
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
